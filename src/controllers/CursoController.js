@@ -11,29 +11,10 @@ class CursoController {
                 return response.status(400).json({ mensagen: 'Os campos nome e horas do curso são obrigatorios' })
             }
 
-            // //validating email format
-            // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            // if (!emailRegex.test(dados.email)) {
-            //     return response.status(400).json({ mensagem: 'Email inválido.' });
-            // }
-
             //validating horas
             if (typeof dados.horas != 'number' || dados.horas < 0) {
                 return response.status(400).json({ mensagen: 'A idade tem que ser um numero inteiro positivo' })
             }
-
-            // //validating sexo
-            // const array = ['Masculino', 'Feminino', 'Outro']
-            // if (!array.includes(dados.sexo)) {
-            //     return response.status(400).json({ mensagen: 'Valor não valido. Os valores validos são Masculino, Feminino, Outro.'})
-            // }
-
-            //validating if the email there exist in db
-            // const isemailDb = await conexao.query("select * from clients where email = $1", [dados.email])
-
-            // if (isemailDb.rows.length != 0) {
-            //     return response.status(400).json({ mensagem: 'O EMAIL fornecido ja esta cadastrado' })
-            // }
 
             const curso = await Curso.create({
                 nome: dados.nome,
@@ -46,15 +27,15 @@ class CursoController {
         }
     }
 
-    // async listar(request, response) {
-    //     try {
-    //         const responsaveis = await Responsavel.findAll()
-    //         response.json(responsaveis)
-    //     } catch (error) {
-    //         console.log(error);
-    //         return response.status(500).json({ mensagem: 'Erro no servidor' })
-    //     }
-    // }
+    async listar(request, response) {
+        try {
+            const cursos = await Curso.findAll()
+            response.status(200).json(cursos)
+        } catch (error) {
+            //console.log(error);
+            return response.status(500).json({ mensagem: 'Erro no servidor' })
+        }
+    }
 
     // async listarUm(request, response) {
     //     try {

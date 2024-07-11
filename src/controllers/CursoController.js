@@ -21,7 +21,7 @@ class CursoController {
                 nome: dados.nome,
                 horas: dados.horas
             })
-            response.status(201).json(curso)
+            return response.status(201).json(curso)
         } catch (error) {
             //console.log(error);
             return response.status(500).json({ mensagem: 'Erro no servidor' });
@@ -40,10 +40,11 @@ class CursoController {
             whereClause.horas = parseInt(filtros.horas, 10);
         }
 
-        console.log(whereClause)
+        //console.log(whereClause)
+        //console.log(filtros.nome)
 
         try {
-            if (filtros) {
+            if (filtros.nome || filtros.horas) {
                 const cursos = await Curso.findAll({
                     where: {
                         [Op.or]: whereClause
@@ -66,7 +67,7 @@ class CursoController {
             }
         } catch (error) {
             console.log(error);
-            return response.status(500).json({ mensagem: 'Erro no servidor' })
+            return response.status(500).json({ mensagem: 'Erro no servidor' });
         }
     }
 
@@ -78,6 +79,13 @@ class CursoController {
 
             if (!dados.nome && !dados.horas) {
                 return response.status(400).json({ mensagen: 'O campos nome ou hora do curso são necesarios' })
+            }
+
+            //validating horas
+            if (dados.horas){
+                if (typeof dados.horas != 'number' || dados.horas < 0) {
+                    return response.status(400).json({ mensagen: 'A idade tem que ser um numero inteiro positivo' })
+                }
             }
 
             const curso = await Curso.findByPk(cursoID)
@@ -96,6 +104,25 @@ class CursoController {
         }
     }
 
+    async apagar(request, response) {
+        try {
+            const cursoID = request.params.id;
+
+            const curso = await Curso.findByPk(cursoID);
+
+            if (!curso) {
+                return response.status(404).json({ mensagem: 'Curso não encontrado' });
+            }
+
+            await curso.destroy();
+
+            return response.json({ mensagem: 'Curso excluído com sucesso' });
+        } catch (error) {
+            console.log(error);
+            return response.status(500).json({ mensagem: 'Erro no servidor' });
+        }
+    }
+
     // async listarUm(request, response) {
     //     try {
     //         const resposavelID = request.params.id
@@ -109,27 +136,6 @@ class CursoController {
     //         return response.status(500).json({ mensagem: 'Erro no servidor' })
     //     }
     // }
-
-
-    // async apagar(request, response) {
-    //     try {
-    //         const resposavelID = request.params.id
-
-    //         const curso = await curso.findByPk(resposavelID)
-
-    //         if (!curso) {
-    //             return response.status(404).json({ mensagem: 'Responsável não encontrado' })
-    //         }
-
-    //         await curso.destroy()
-
-    //         response.json({ mensagem: 'Responsável excluído com sucesso' })
-    //     } catch (error) {
-    //         console.log(error);
-    //         return response.status(500).json({ mensagem: 'Erro no servidor' })
-    //     }
-    // }
-
 }
 
 module.exports = new CursoController()

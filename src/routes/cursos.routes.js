@@ -9,7 +9,7 @@ cursoRoutes.post('/',CursoController.criar)
 cursoRoutes.get('/',CursoController.listar)
 // cursoRoutes.get('/',CursoController.listarUm)
 cursoRoutes.put('/:id',CursoController.editar)
-// cursoRoutes.delete('/',CursoController.apagar)
+cursoRoutes.delete('/:id',CursoController.apagar)
 
 module.exports = cursoRoutes
 

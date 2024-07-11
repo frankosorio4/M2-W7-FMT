@@ -62,7 +62,7 @@ class CursoController {
                 return response.status(200).json(cursos)
             } else {
                 const cursos = await Curso.findAll()
-                response.status(200).json(cursos)
+                return response.status(200).json(cursos)
             }
         } catch (error) {
             console.log(error);
@@ -70,31 +70,31 @@ class CursoController {
         }
     }
 
-    // async editar(request, response) {
-    //     try {
-    //         const cursoID = request.params.id
-    //         const dados = request.body
-    //         console.log(dados)
+    async editar(request, response) {
+        try {
+            const cursoID = request.params.id
+            const dados = request.body
+            console.log(dados)
 
-    //         if (!dados.nome && !dados.horas) {
-    //             return response.status(400).json({ mensagen: 'O campos nome ou hora do curso são necesarios' })
-    //         }
+            if (!dados.nome && !dados.horas) {
+                return response.status(400).json({ mensagen: 'O campos nome ou hora do curso são necesarios' })
+            }
 
-    //         const curso = await Curso.findByPk(cursoID)
-    //         if (!curso) {
-    //             return response.status(404).json({ mensagem: 'Curso não encontrado' })
-    //         }
+            const curso = await Curso.findByPk(cursoID)
+            if (!curso) {
+                return response.status(404).json({ mensagem: 'Curso não encontrado' })
+            }
 
-    //         curso.nome = dados.nome ?? curso.nome
-    //         curso.horas = dados.horas ?? curso.horas
+            curso.nome = dados.nome ?? curso.nome
+            curso.horas = dados.horas ?? curso.horas
 
-    //         await curso.save()
-    //         response.json(curso)
-    //     } catch (error) {
-    //         console.log(error);
-    //         return response.status(500).json({ mensagem: 'Erro no servidor' })
-    //     }
-    // }
+            await curso.save()
+            return response.json(curso)
+        } catch (error) {
+            console.log(error);
+            return response.status(500).json({ mensagem: 'Erro no servidor' })
+        }
+    }
 
     // async listarUm(request, response) {
     //     try {

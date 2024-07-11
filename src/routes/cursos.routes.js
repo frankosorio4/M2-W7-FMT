@@ -8,7 +8,7 @@ const cursoRoutes = new Router()
 cursoRoutes.post('/',CursoController.criar)
 cursoRoutes.get('/',CursoController.listar)
 // cursoRoutes.get('/',CursoController.listarUm)
-// cursoRoutes.put('/:id',CursoController.editar)
+cursoRoutes.put('/:id',CursoController.editar)
 // cursoRoutes.delete('/',CursoController.apagar)
 
 module.exports = cursoRoutes

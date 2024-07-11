@@ -1,4 +1,5 @@
 const Curso = require('../models/Curso')
+const { Op, fn, col } = require('sequelize')
 
 class CursoController {
 
@@ -28,66 +29,99 @@ class CursoController {
     }
 
     async listar(request, response) {
+
+        const filtros = request.query;
+        const whereClause = {};
+
+        if (filtros.nome) {
+            whereClause.nome = { [Op.iLike]: `%${filtros.nome}%` };
+        }
+        if (filtros.horas) {
+            whereClause.horas = parseInt(filtros.horas, 10);
+        }
+
+        console.log(whereClause)
+
         try {
-            const cursos = await Curso.findAll()
-            response.status(200).json(cursos)
+            if (filtros) {
+                const cursos = await Curso.findAll({
+                    where: {
+                        [Op.or]: whereClause
+                    }
+                    //If we need a specific search where the two query params are true
+                    // where: {
+                    //     [Op.and]: whereClause
+                    // }
+                })
+                // validating 'cursos' nao encontrado
+                //console.log('length',cursos.length)
+                //console.log(cursos)
+                if (cursos.length === 0){
+                    return response.status(404).json({mensagem: "Curso não encontrado"})
+                }
+                return response.status(200).json(cursos)
+            } else {
+                const cursos = await Curso.findAll()
+                response.status(200).json(cursos)
+            }
         } catch (error) {
-            //console.log(error);
+            console.log(error);
             return response.status(500).json({ mensagem: 'Erro no servidor' })
         }
     }
 
+    // async editar(request, response) {
+    //     try {
+    //         const cursoID = request.params.id
+    //         const dados = request.body
+    //         console.log(dados)
+
+    //         if (!dados.nome && !dados.horas) {
+    //             return response.status(400).json({ mensagen: 'O campos nome ou hora do curso são necesarios' })
+    //         }
+
+    //         const curso = await Curso.findByPk(cursoID)
+    //         if (!curso) {
+    //             return response.status(404).json({ mensagem: 'Curso não encontrado' })
+    //         }
+
+    //         curso.nome = dados.nome ?? curso.nome
+    //         curso.horas = dados.horas ?? curso.horas
+
+    //         await curso.save()
+    //         response.json(curso)
+    //     } catch (error) {
+    //         console.log(error);
+    //         return response.status(500).json({ mensagem: 'Erro no servidor' })
+    //     }
+    // }
+
     // async listarUm(request, response) {
     //     try {
     //         const resposavelID = request.params.id
-    //         const responsavel = await Responsavel.findByPk(resposavelID)
-    //         if (!responsavel) {
+    //         const curso = await curso.findByPk(resposavelID)
+    //         if (!curso) {
     //             return response.status(404).json({ mensagem: 'Responsável não encontrado' })
     //         }
-    //         response.json(responsavel)
+    //         response.json(curso)
     //     } catch (error) {
     //         console.log(error);
     //         return response.status(500).json({ mensagem: 'Erro no servidor' })
     //     }
     // }
 
-    // async editar(request, response) {
-    //     try {
-
-    //         // TO DO VALIDAR DATA
-    //         const resposavelID = request.params.id
-    //         const dados = request.body
-
-    //         const responsavel = await Responsavel.findByPk(resposavelID)
-    //         if (!responsavel) {
-    //             return response.status(404).json({ mensagem: 'Responsável não encontrado' })
-    //         }
-
-    //         responsavel.nome = dados.nome ?? responsavel.nome
-    //         responsavel.idade = dados.idade ?? responsavel.idade
-    //         responsavel.email = dados.email ?? responsavel.email
-    //         responsavel.senha = dados.senha ?? responsavel.senha
-    //         responsavel.sexo = dados.sexo ?? responsavel.sexo
-
-    //         await responsavel.save()
-    //         response.json(responsavel)
-    //     } catch (error) {
-    //         console.log(error);
-    //         return response.status(500).json({ mensagem: 'Erro no servidor' })
-    //     }
-    // }
 
     // async apagar(request, response) {
     //     try {
     //         const resposavelID = request.params.id
 
-    //         const responsavel = await Responsavel.findByPk(resposavelID)
+    //         const curso = await curso.findByPk(resposavelID)
 
-    //         if (!responsavel) {
+    //         if (!curso) {
     //             return response.status(404).json({ mensagem: 'Responsável não encontrado' })
     //         }
 
-    //         await responsavel.destroy()
+    //         await curso.destroy()
 
     //         response.json({ mensagem: 'Responsável excluído com sucesso' })
     //     } catch (error) {

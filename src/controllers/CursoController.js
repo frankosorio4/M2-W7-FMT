@@ -73,7 +73,7 @@ class CursoController {
 
     async editar(request, response) {
         try {
-            const cursoID = request.params.id
+            const cursoId = request.params.id
             const dados = request.body
             console.log(dados)
 
@@ -88,7 +88,7 @@ class CursoController {
                 }
             }
 
-            const curso = await Curso.findByPk(cursoID)
+            const curso = await Curso.findByPk(cursoId)
             if (!curso) {
                 return response.status(404).json({ mensagem: 'Curso não encontrado' })
             }
@@ -106,9 +106,9 @@ class CursoController {
 
     async apagar(request, response) {
         try {
-            const cursoID = request.params.id;
+            const cursoId = request.params.id;
 
-            const curso = await Curso.findByPk(cursoID);
+            const curso = await Curso.findByPk(cursoId);
 
             if (!curso) {
                 return response.status(404).json({ mensagem: 'Curso não encontrado' });
@@ -116,7 +116,7 @@ class CursoController {
 
             await curso.destroy();
 
-            return response.json({ mensagem: 'Curso excluído com sucesso' });
+            return response.status(200).json({ mensagem: 'Curso excluído com sucesso' });
         } catch (error) {
             console.log(error);
             return response.status(500).json({ mensagem: 'Erro no servidor' });
